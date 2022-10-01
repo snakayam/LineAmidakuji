@@ -50,31 +50,30 @@ def callback():
 
     return 'OK'
 
-# あみだくじ部分
+# あみだくじ関数
 def amidakuji(receive_text):
     array = receive_text.splitlines()
     attend = array.index("<参加者>") + 1
     result = array.index("<結果>") + 1
-    attend_array = []
-    result_array = []
-    attend_total = 0
+    attend_array = array[attend:result]
+    result_array = array[result:]
     # 配列の作成
-    for i in range(attend, result-1):
-        if array[i].replace(' ', '').replace('　','') != "":
-            attend_array.append(array[i])
-            attend_total += 1
-    for i in range(result, len(array)):
-        if array[i].replace(' ', '').replace('　','') != "":
-            result_array.append(array[i])
+    for x in attend_array:
+        if x == "":
+            attend_array.remove(x)
+    for y in result_array:
+        if y == "":
+            result_array.remove(y)
     # 結果の補充
-    while len(result_array) < attend_total:
-        result_array.append("ハズレ")
+    # while len(result_array) < attend_total:
+    #     result_array.append("ハズレ")
+    result_array += ["はずれ"] * (len(attend_array) - len(result_array))
     # あみだくじ
     random.shuffle(result_array)
     # 返信内容の入力
     reply_text = "<あみだくじ結果>"
-    for i in range(0, attend_total):
-        reply_text += "\n" + attend_array[i] + " : " + result_array[i]
+    for x, y in zip(attend_array, result_array):
+        reply_text += "\n" + x + " : " + y
     return reply_text
 
 #以下でWebhookから送られてきたイベントをどのように処理するかを記述する
